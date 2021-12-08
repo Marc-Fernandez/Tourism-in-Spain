@@ -1,0 +1,190 @@
+# Ejercicio 3 - Intervalo de confianza del 95%, n = 423.893 y sigma estimada (S).
+
+t.test(pernoctas$pernoc_etapa)
+
+# El intervalo conseguido (7.611806 7.679572), siendo la media muestral 7.645689
+
+
+
+# Ejercicio 4 - Variable de estudio: gasto total según origen (Europa vs. Resto del mundo)
+  # Hipótesis Nula: media de gasto de turistas europeos = media de gasto de turistas del resto del mundo.
+  # Hipótesis Alternativa: media de gasto de turistas europeos < media de gasto de turistas del resto del mundo
+  # Utilizaremos el paquete "dplyr" para filtrar las observaciones de la muestra según su origen (Europa son los paises con variable país entre 1 y 12, resto del mundo entre 13 y 15):
+  # NOTA: Si es necesario, se puede instalar DPLYR ejecutando el siguiente comando: install.packages(dplyr)
+  # Habilitamos dplyr y filtramos:
+
+library(dplyr)  
+Gasto_Europeos <- filter(GastoTotal, pais<13)
+Gasto_Resto_Del_Mundo <- filter(GastoTotal, pais>12)
+t.test(Gasto_Europeos$gastototal, Gasto_Resto_Del_Mundo$gastototal, m=0, alternative = "less", var.equal = FALSE)
+
+
+
+# Ejercicio 5 - Variable de estudio: diferencia de gasto entre 2018 y 2019, ¿se gastó más en 2019?
+
+  # Creamos la tabla de diferencias:
+
+Gasto18_Alemania <- filter(Gasto18, pais == 1)
+Gasto18_Belgica <- filter(Gasto18, pais == 2)
+Gasto18_Francia <- filter(Gasto18, pais == 3)
+Gasto18_Irlanda <- filter(Gasto18, pais == 4)
+Gasto18_Italia <- filter(Gasto18, pais == 5)
+Gasto18_PaisesBajos <- filter(Gasto18, pais == 6)
+Gasto18_Portugal <- filter(Gasto18, pais == 7)
+Gasto18_UK <- filter(Gasto18, pais == 8)
+Gasto18_Suiza <- filter(Gasto18, pais == 9)
+Gasto18_Rusia <- filter(Gasto18, pais == 10)
+Gasto18_PaisesNordicos <- filter(Gasto18, pais == 11)
+Gasto18_RestoDeEuropa <- filter(Gasto18, pais == 12)
+Gasto18_EEUU <- filter(Gasto18, pais == 13)
+Gasto18_RestoDeAmerica <- filter(Gasto18, pais == 14)
+Gasto18_RestoDelMundo <- filter(Gasto18, pais == 15)
+Gasto_Por_Paises_2018 <- data.frame("2018" = c(mean(Gasto18_Alemania$gastototal), mean(Gasto18_Belgica$gastototal),mean(Gasto18_Francia$gastototal), mean(Gasto18_Irlanda$gastototal), mean(Gasto18_Italia$gastototal), mean(Gasto18_PaisesBajos$gastototal), mean(Gasto18_Portugal$gastototal), mean(Gasto18_UK$gastototal), mean(Gasto18_Suiza$gastototal), mean(Gasto18_Rusia$gastototal), mean(Gasto18_PaisesNordicos$gastototal), mean(Gasto18_RestoDeEuropa$gastototal), mean(Gasto18_EEUU$gastototal), mean(Gasto18_RestoDeAmerica$gastototal), mean(Gasto18_RestoDelMundo$gastototal)))
+
+Gasto19_Alemania <- filter(Gasto19, pais == 1)
+Gasto19_Belgica <- filter(Gasto19, pais == 2)
+Gasto19_Francia <- filter(Gasto19, pais == 3)
+Gasto19_Irlanda <- filter(Gasto19, pais == 4)
+Gasto19_Italia <- filter(Gasto19, pais == 5)
+Gasto19_PaisesBajos <- filter(Gasto19, pais == 6)
+Gasto19_Portugal <- filter(Gasto19, pais == 7)
+Gasto19_UK <- filter(Gasto19, pais == 8)
+Gasto19_Suiza <- filter(Gasto19, pais == 9)
+Gasto19_Rusia <- filter(Gasto19, pais == 10)
+Gasto19_PaisesNordicos <- filter(Gasto19, pais == 11)
+Gasto19_RestoDeEuropa <- filter(Gasto19, pais == 12)
+Gasto19_EEUU <- filter(Gasto19, pais == 13)
+Gasto19_RestoDeAmerica <- filter(Gasto19, pais == 14)
+Gasto19_RestoDelMundo <- filter(Gasto19, pais == 15)
+Gasto_por_paises_2019 <- data.frame("2019" = c(mean(Gasto19_Alemania$gastototal), mean(Gasto19_Belgica$gastototal),mean(Gasto19_Francia$gastototal), mean(Gasto19_Irlanda$gastototal), mean(Gasto19_Italia$gastototal), mean(Gasto19_PaisesBajos$gastototal), mean(Gasto19_Portugal$gastototal), mean(Gasto19_UK$gastototal), mean(Gasto19_Suiza$gastototal), mean(Gasto19_Rusia$gastototal), mean(Gasto19_PaisesNordicos$gastototal), mean(Gasto19_RestoDeEuropa$gastototal), mean(Gasto19_EEUU$gastototal), mean(Gasto19_RestoDeAmerica$gastototal), mean(Gasto19_RestoDelMundo$gastototal)))
+dif <- c(Gasto_por_paises_2019 - Gasto_Por_Paises_2018)
+
+  # Construimos la tabla de variables pareadas. 
+  # NOTA IMPORTANTE: R no nos deja poner un nombre no numérico a la última columna, por tanto, la columna "X2019.1" contiene el resultado de las diferencias de las dos columnas anteriores (X2019 - X2018).
+
+Tabla_Diferencias <- data.frame("Pais" = c("Alemania", "Belgica", "Francia", "Irlanda", "Italia", "Paises Bajos", "Portugal", "UK", "Suiza", "Rusia", "Paises Nordicos", "Resto de Europa", "EEUU", "Resto de America", "Resto del Mundo"), "2018" = Gasto_Por_Paises_2018, "2019" = Gasto_por_paises_2019 ,"Diferencia" = dif)
+
+  # Realizamos la Prueba de hipótesis (PH) y el Intervalo de Confianza (IC) del 95%.
+  # Hipótesis Nula: la media de gasto del 2019 es igual a la del 2018.
+  # Hipótesis Alternativa: La media de gasto del 2019 es mayor a la del 2018.
+
+PH_Diferencia_De_Gasto <- t.test(Gasto_por_paises_2019$X2019, Gasto_Por_Paises_2018$X2018, paired = T)
+print(PH_Diferencia_De_Gasto)
+
+  # Dividimos el p-valor entre dos para tener solo en cuenta la cola superior (media de gasto del 2019 es mayor que la del 2018).
+
+PH_Diferencia_De_Gasto$p.value/2
+
+  # IC = (0.2000194, 38.4568621)
+  # Valor-p = 0.02397642 | Por lo tanto se rechaza la hipótesis nula. 
+  # CONCLUSIÓN: se ha gastado más a lo largo de 2019 que 2018.
+
+
+
+# Ejercicio 6 - Prueba de independencia entre dos categóricas.
+  # Hipótesis Nula: El tipo de transporte y el alojamiento escogido son independientes entre sí.
+  # Hipótesis Alternativa: Ambas variables estan relacionadas.
+
+  # NOTA: Para el recuento de observaciones, hemos utilizado el siguiente código:
+
+nrow(filter(GastoTotal, A1 == 1 & aloja == 1))
+nrow(filter(GastoTotal, A1 == 2 & aloja == 1))
+nrow(filter(GastoTotal, A1 == 3 & aloja == 1))
+nrow(filter(GastoTotal, A1 == 4 & aloja == 1))
+nrow(filter(GastoTotal, A1 == 1 & aloja == 2)) 
+nrow(filter(GastoTotal, A1 == 2 & aloja == 2))
+nrow(filter(GastoTotal, A1 == 3 & aloja == 2))
+nrow(filter(GastoTotal, A1 == 4 & aloja == 2)) 
+nrow(filter(GastoTotal, A1 == 1 & aloja == 3))
+nrow(filter(GastoTotal, A1 == 2 & aloja == 3))
+nrow(filter(GastoTotal, A1 == 3 & aloja == 3)) 
+nrow(filter(GastoTotal, A1 == 4 & aloja == 3))
+
+  # Totales:
+
+nrow(filter(GastoTotal, A1 == 1))
+nrow(filter(GastoTotal, A1 == 2))
+nrow(filter(GastoTotal, A1 == 3))
+nrow(filter(GastoTotal, A1 == 4))
+nrow(filter(GastoTotal, aloja == 1))
+nrow(filter(GastoTotal, aloja == 2))
+nrow(filter(GastoTotal, aloja == 3))
+nrow(GastoTotal)
+
+  # Para la creación de las tablas de frecuencia (una con totales y otra sin ellos):
+
+Independencia_sin_totales <- matrix(c(15713, 176689, 7205, 3504, 9947, 25651, 2356, 882, 18897, 88333, 4726, 1761), nrow = 4, ncol = 3)
+rownames(Independencia_sin_totales) <- c("Carretera", "Aeropuerto", "Puerto", "Tren")
+colnames(Independencia_sin_totales) <- c("Hoteles y similares", "Resto mercado", "Alojamiento no de mercado")
+mosaicplot(t(Independencia_sin_totales), main = "Estudio variables categoricas", ylab = "Via de acceso", xlab = "Alojamiento")
+
+Independencia <- matrix(c(15713, 176689, 7205, 3504, 203111, 9947, 25651, 2356, 882, 38836, 18897, 88333, 4726, 1761, 113717, 44557, 290673, 14287, 6147, 355664), nrow = 5, ncol = 4)
+rownames(Independencia) <- c("Carretera", "Aeropuerto", "Puerto", "Tren", "Total")
+colnames(Independencia) <- c("Hoteles y similares", "Resto mercado", "Alojamiento no de mercado", "Total")
+
+  # Para la creación de la tabla de frecuencias esperadas y observadas:
+Independencia_Esperada <- chisq.test(Independencia)$expected
+Independencia_Observed <- chisq.test(Independencia)$observed
+
+  # Para la PH:
+
+chisq.test(Independencia)
+
+  # p-value: 2.2e-16
+  # Conclusión: Las variables son dependientes entre sí, es decir, el tipo de transporte influye en el tipo de alojamiento escogido.
+
+# Ejercicio 7: Prueba del buen ajuste
+  # Hipótesis Nula: El gasto de la población es uniforme.
+  # Hopótesis Alternativa: El gasto de la población no es uniforme.
+
+chisq.test(GastoTotal$gastototal)
+
+  # p-value: 2.2e-16
+  # CONCLUSIÓN: Rechazamos la hipótesis nula, el gasto no sigue una distribución uniforme.
+
+
+# Para la creación de gráficos:
+
+  # Histograma del gasto de la población (normal y logarítmica, para contrarestar la dispersión de la muestra):
+par(mfrow = c(1,2))
+hist(GastoTotal$gastototal, main = "Histograma gasto total", xlab ="Gasto total", ylab = "Frecuencias", col = "lightblue")
+hist(log(GastoTotal$gastototal), main = "Histograma gasto total, escala logaritmica", xlab ="Gasto total (log)", ylab = "Frecuencias", col = "lightblue")
+
+  # Histograma duración del viaje (normal y logarítmica).
+par(mfrow = c(1,2))
+hist(log(pernoctas$pernoc_etapa), main = "Duracion del viaje (log)", xlab = "Pernoctas", ylab = "Frecuencia", col = "palegreen")
+hist(pernoctas$pernoc_etapa, main = "Duracion del viaje", xlab = "Pernoctas", ylab = "Frecuencia", col = "palegreen")
+
+
+  # Mosaicplot tabla de frecuencias variables categóricas.
+mosaicplot(t(Independencia_sin_totales), main = "Estudio variables categoricas", ylab = "Via de acceso", xlab = "Alojamiento", col = "lightblue")
+
+  # Gráfico sectorial viaje con paquete turístico.
+par(mfrow = c(1,1))
+Recuento_PaqueteTuristico <- matrix(c(nrow(filter(GastoTotal, A16 == 1)), nrow(filter(GastoTotal, A16 == 6))), nrow = 1, ncol = 2)
+colnames(Recuento_PaqueteTuristico) <- c("Si", "No")
+rownames(Recuento_PaqueteTuristico) <- "Recuento"
+pie(Recuento_PaqueteTuristico, labels = c("Si (20.54%)", "No (79.46%)"), main = "Grafico de sectores paquete turistico", col = c("palegreen", "salmon"))
+
+  # Gráfico de barras Europa vs. Resto del mundo.
+par(mfrow = c(1,1))
+Recuento_procedencia <- matrix(c(nrow(Gasto_Europeos), nrow(Gasto_Resto_Del_Mundo)), ncol = 2, nrow = 1)
+colnames(Recuento_procedencia) <- c("Europa", "Resto del Mundo")
+rownames(Recuento_procedencia) <- "Recuento"
+barplot(Recuento_procedencia, main = "Grafico de barras Procedencia", col = "seashell2")
+
+  # Gráfico de barras tipo de alojamiento
+  # NOTA: Numeros para la tabla obtenidos a partir de la tabla "Independencia"
+par(mfrow = c(1,1))
+Recuento_Alojamiento <- matrix(c(203111, 38836, 113717), ncol = 3, nrow = 1)
+rownames(Recuento_Alojamiento) <- "Recuento"
+colnames(Recuento_Alojamiento) <- c("Hoteles y similares", "Resto del mercado", "Alojamiento no de mercado")
+barplot(Recuento_Alojamiento, main = "Grafico de barras tipo de alojamiento", col = "orchid1")
+
+  # Gráfico de barras tipo de transporte
+  # NOTA: Numeros para la tabla obtenidos a partir de Independencia_sin_totales
+par(mfrow = c(1,1))
+Recuento_Transporte <- matrix(c(44557, 290673, 14287, 6147), ncol = 4, nrow = 1)
+rownames(Recuento_Transporte) <- "Recuento"
+colnames(Recuento_Transporte) <- c("Carretera", "Aeropuerto", "Puerto", "Tren")
+barplot(Recuento_Transporte, main = "Grafico de barras tipo de transporte de arribada", col ="lightgoldenrod")
